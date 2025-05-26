@@ -49,6 +49,10 @@ trigger:
 
 condition: []
 
+variables:
+  min_away: !input min_away_seconds
+  close_on_set: !input turn_off_boolean
+
 action:
   - choose:
       - conditions:
@@ -60,7 +64,7 @@ action:
           - condition: template
             value_template: >
               {{ (as_timestamp(trigger.to_state.last_changed) -
-                  as_timestamp(trigger.from_state.last_changed)) > (min_away_seconds | int) }}
+                  as_timestamp(trigger.from_state.last_changed)) > (min_away | int) }}
         sequence:
           - service: cover.open_cover
             target:
@@ -69,7 +73,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ turn_off_boolean }}"
+                    value_template: "{{ close_on_set }}"
                 sequence:
                   - service: input_boolean.turn_off
                     target:
